@@ -1,0 +1,19 @@
+{
+  "no_snapshot": "Visit workspace to get a snapshot",
+  "no_apps": "No windows open",
+  "just_now": "just now",
+  "ago_seconds": "{n}s ago",
+  "ago_minutes": "{n}m ago",
+  "ago_hours": "{n}h ago",
+  "more": "+{n} more",
+  "settings": {
+    "hover_delay_ms": {
+      "label": "Hover delay",
+      "description": "How long the pointer rests on a workspace before the preview opens (ms)"
+    },
+    "refresh_seconds": {
+      "label": "Refresh interval",
+      "description": "How often the visible workspace is re-captured when nothing changes (seconds)"
+    }
+  }
+}

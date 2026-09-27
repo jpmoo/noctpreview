@@ -1,0 +1,97 @@
+id = "jpmoo/workspace-peek"
+name = "Workspace Peek"
+version = "0.1.0"
+plugin_api = 32
+author = "jpmoo"
+license = "MIT"
+icon = "layout-grid"
+description = "Hyprland workspaces for the bar that show a thumbnail and the open apps when you hover one."
+tags = ["bar", "workspaces", "hyprland"]
+dependencies = ["python3", "grim", "hyprctl"]
+
+[[setting]]
+key = "hover_delay_ms"
+type = "int"
+label_key = "settings.hover_delay_ms.label"
+description_key = "settings.hover_delay_ms.description"
+default = 250
+min = 0
+max = 1500
+step = 50
+
+[[setting]]
+key = "refresh_seconds"
+type = "int"
+label_key = "settings.refresh_seconds.label"
+description_key = "settings.refresh_seconds.description"
+default = 30
+min = 5
+max = 600
+step = 5
+
+[[service]]
+id = "capture"
+entry = "service.luau"
+
+[[widget]]
+id = "workspaces"
+entry = "widget.luau"
+
+# One panel per app-list length (1-5 rows): a plugin panel's height is fixed,
+# so the service opens the one that fits. Height = 294 + 27 * rows; keep in
+# step with lib/layout.luau.
+
+[[panel]]
+id = "preview1"
+entry = "preview.luau"
+width = 380
+height = 321
+placement = "floating"
+position = "top_left"
+persistent = true
+dismiss_on_outside_click = false
+keyboard_focus = "none"
+
+[[panel]]
+id = "preview2"
+entry = "preview.luau"
+width = 380
+height = 348
+placement = "floating"
+position = "top_left"
+persistent = true
+dismiss_on_outside_click = false
+keyboard_focus = "none"
+
+[[panel]]
+id = "preview3"
+entry = "preview.luau"
+width = 380
+height = 375
+placement = "floating"
+position = "top_left"
+persistent = true
+dismiss_on_outside_click = false
+keyboard_focus = "none"
+
+[[panel]]
+id = "preview4"
+entry = "preview.luau"
+width = 380
+height = 402
+placement = "floating"
+position = "top_left"
+persistent = true
+dismiss_on_outside_click = false
+keyboard_focus = "none"
+
+[[panel]]
+id = "preview5"
+entry = "preview.luau"
+width = 380
+height = 429
+placement = "floating"
+position = "top_left"
+persistent = true
+dismiss_on_outside_click = false
+keyboard_focus = "none"
