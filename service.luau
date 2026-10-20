@@ -26,24 +26,31 @@ local function panelFor(ws: string): string
   return layout.panelId(layout.rows(#apps))
 end
 
+-- The running Noctalia binary, by path. Started from a login session, Noctalia's
+-- PATH may not include where it lives (~/.local/bin under GDM), so a bare
+-- "noctalia" would fail and the preview would never open. Resolved below.
+local noctaliaBin = "noctalia"
+
 -- Panel commands run one at a time, in order: a quick leave-and-return must
 -- not let "open" overtake the "close" issued before it.
 local queue = {}
 local running = false
+local resolved = false -- hold commands until noctaliaBin is known
 
 local function drain()
-  if running or #queue == 0 then
+  if running or not resolved or #queue == 0 then
     return
   end
   running = true
-  noctalia.runAsync(table.remove(queue, 1), function()
+  local cmd = table.remove(queue, 1)
+  noctalia.runAsync({ noctaliaBin, "msg", cmd.verb, cmd.id }, function()
     running = false
     drain()
   end)
 end
 
 local function panelMsg(verb: string, id: string)
-  table.insert(queue, { "noctalia", "msg", verb, id })
+  table.insert(queue, { verb = verb, id = id })
   drain()
 end
 
@@ -74,6 +81,16 @@ end
 local function panelOpen(): boolean
   return openPanel ~= nil
 end
+
+-- The shell runAsync starts is Noctalia's child, so $PPID is Noctalia itself.
+noctalia.runAsync("readlink /proc/$PPID/exe", function(result)
+  local path = noctalia.string.trim(result.stdout or "")
+  if result.exitCode == 0 and path ~= "" then
+    noctaliaBin = path
+  end
+  resolved = true
+  drain()
+end)
 
 noctalia.state.set("hover_ws", "")
 noctalia.state.set("peek_ws", "")
@@ -151,7 +168,7 @@ function onExit()
   -- Callbacks die with this runtime, so close everything in one detached shell.
   local cmds = {}
   for rows = 1, layout.MAX_ROWS do
-    table.insert(cmds, `noctalia msg panel-close {layout.panelId(rows)}`)
+    table.insert(cmds, `{shq(noctaliaBin)} msg panel-close {layout.panelId(rows)}`)
   end
   noctalia.runAsync(table.concat(cmds, "; "))
   signalHelper("TERM")
